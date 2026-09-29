@@ -1,0 +1,30 @@
+# App Platform spec for log-test-app.
+# Edit repo_clone_url to your own GitHub repo once pushed, and fill in the
+# Beatrice relay endpoint + shared secret from the Vector setup.
+#
+# Deploy with:
+#   doctl apps create --spec app-spec.yaml
+# Or, to update an existing app:
+#   doctl apps update <app-id> --spec app-spec.yaml
+
+name: log-test-app
+region: nyc
+services:
+  - name: log-test-app
+    github:
+      repo: your-github-username/log-test-app   # <-- change me
+      branch: main
+      deploy_on_push: true
+    build_command: npm run build
+    run_command: npm start
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    http_port: 8080
+    health_check:
+      http_path: /health
+    log_destinations:
+      - name: beatrice
+        datadog:
+          endpoint: https://logs.beatrice.example.com/api/v2/logs   # <-- change me
+          api_key: PASTE_YOUR_SHARED_SECRET_HERE                     # <-- change me
